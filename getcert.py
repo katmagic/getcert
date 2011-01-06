@@ -94,6 +94,8 @@ if __name__ == '__main__':
 		digest = get_cert_digest(host, port=opts.port, digest=opts.digest)
 	except socket.gaierror:
 		exit("We couldn't connect to {0}:{1}".format(host, opts.port))
+	except socket.error:
+		exit("The remote host refused to establish a connection with us. Meanies!")
 	except ssl.SSLError:
 		exit("The remote host dosn't support SSL.")
 
