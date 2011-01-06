@@ -26,6 +26,8 @@
 # Oodles of love,
 # katmagic
 
+"""Get the digest of a host's SSL certificate."""
+
 from __future__ import print_function
 import hashlib
 import socket
