@@ -1,18 +1,23 @@
 #!/usr/bin/env python
 import hashlib
+import socket
 import ssl
 import re
 
 def get_cert_digest(domain, port=443, digest=hashlib.sha1):
 	"""Get the SHA-1 fingerprint of an SSL certificate."""
 
+	# Get a connection to domain:port.
+	sock = socket.socket()
+	sock.connect( (domain, port) )
+
 	# Get the SSL certificate.
-	try:
-		ssock = ssl.SSLSocket(ssl_version=ssl.PROTOCOL_TLSv1)
-		ssock.connect( (domain, port) )
-		cert = ssock.getpeercert(binary_form=True)
-	finally:
-		ssock.close()
+	ssock = ssl.SSLSocket(sock)
+	cert = ssock.getpeercert(binary_form=True)
+
+	# Close the connection.
+	ssock.close()
+	sock.close()
 
 	# Hash the SSL certificate.
 	digest = digest(cert).hexdigest()
