@@ -6,8 +6,9 @@ About
 
 `getcert` is a simple Python script that allows you to determine the digests of
 SSL certificates. It support MD5, SHA-1, SHA-224, SHA-256, SHA-384, and SHA-512.
-It might be useful when you want to check from a script whether someone is
-running a [man in the middle attack][MITM].
+It might be a useful tool to _aid_ in determining (but not single-handedly
+determine) whether someone is runnning a [man in the middle attack][MITM]
+against you.
 [MITM]: https://secure.wikimedia.org/wikipedia/en/wiki/Man-in-the-middle_attack
 
 Command Line Usage Examples
