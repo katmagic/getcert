@@ -123,3 +123,5 @@ if __name__ == '__main__':
 		exit("The remote host refused to establish a connection with us. Meanies!")
 	except ssl.SSLError:
 		exit("The remote host dosn't support SSL.")
+	except KeyboardInterrupt:
+		exit("")
