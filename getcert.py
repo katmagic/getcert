@@ -84,6 +84,24 @@ if __name__ == '__main__':
 	op.add_option_group(digests)
 	op.set_default('digest', hashlib.sha1)
 
+	op.add_option(
+		'-c',
+		'--show-cert',
+		dest='show',
+		action='store_const',
+		const='certificate',
+		help='show the received SSL certificate'
+	)
+	op.add_option(
+		'-d',
+		'--show-digest',
+		dest='show',
+		action='store_const',
+		const='digest',
+		help="show the digest of the received SSL certificate (default)"
+	)
+	op.set_default('show', 'digest')
+
 	try:
 		(opts, (host,)) = op.parse_args()
 	except ValueError:
@@ -91,12 +109,17 @@ if __name__ == '__main__':
 		exit(1)
 
 	try:
-		digest = get_cert_digest(host, port=opts.port, digest=opts.digest)
+		if opts.show == 'digest':
+			digest = get_cert_digest(host, port=opts.port, digest=opts.digest)
+			print(digest)
+
+		elif opts.show == 'certificate':
+			certificate = ssl.get_server_certificate( (host, opts.port) ).rstrip()
+			print(certificate)
+
 	except socket.gaierror:
 		exit("We couldn't connect to {0}:{1}".format(host, opts.port))
 	except socket.error:
 		exit("The remote host refused to establish a connection with us. Meanies!")
 	except ssl.SSLError:
 		exit("The remote host dosn't support SSL.")
-
-	print(digest)
