@@ -36,8 +36,8 @@ import re
 
 class CertificateChecker(object):
 	@staticmethod
-	def get_cert_digest(domain, port=443, digest=hashlib.sha1):
-		"""Get the SHA-1 fingerprint of an SSL certificate."""
+	def get_cert(domain, port=443):
+		"""Get the (binary) SSL certificate of domain:port."""
 
 		# Get a connection to domain:port.
 		sock = socket.socket()
@@ -51,12 +51,23 @@ class CertificateChecker(object):
 		ssock.close()
 		sock.close()
 
-		# Hash the SSL certificate.
-		digest = digest(cert).hexdigest()
-		# Make the SSL certificate hash pretty.
-		digest = re.sub('(..)', r'\1:', digest)[0:-1].upper()
+		return cert
 
-		return digest
+	@staticmethod
+	def digest(data, digest=hashlib.sha1):
+		"""Return a pretty-printed digest like they show in browser certificate
+		information dialogs."""
+
+		# Hash data.
+		digest = digest(data).hexdigest()
+		# Prettify it.
+		return re.sub('(..)', r'\1:', digest)[0:-1].upper()
+
+	@classmethod
+	def get_cert_digest(cls, domain, port=443, digest=hashlib.sha1):
+		"""Get the fingerprint of a domain:port's SSL certificate."""
+
+		return cls.digest(cls.get_cert(domain, port), digest)
 
 if __name__ == '__main__':
 	import optparse
