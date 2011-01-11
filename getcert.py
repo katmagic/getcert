@@ -34,30 +34,33 @@ import socket
 import ssl
 import re
 
-def get_cert_digest(domain, port=443, digest=hashlib.sha1):
-	"""Get the SHA-1 fingerprint of an SSL certificate."""
+class CertificateChecker(object):
+	@staticmethod
+	def get_cert_digest(domain, port=443, digest=hashlib.sha1):
+		"""Get the SHA-1 fingerprint of an SSL certificate."""
 
-	# Get a connection to domain:port.
-	sock = socket.socket()
-	sock.connect( (domain, port) )
+		# Get a connection to domain:port.
+		sock = socket.socket()
+		sock.connect( (domain, port) )
 
-	# Get the SSL certificate.
-	ssock = ssl.SSLSocket(sock)
-	cert = ssock.getpeercert(binary_form=True)
+		# Get the SSL certificate.
+		ssock = ssl.SSLSocket(sock)
+		cert = ssock.getpeercert(binary_form=True)
 
-	# Close the connection.
-	ssock.close()
-	sock.close()
+		# Close the connection.
+		ssock.close()
+		sock.close()
 
-	# Hash the SSL certificate.
-	digest = digest(cert).hexdigest()
-	# Make the SSL certificate hash pretty.
-	digest = re.sub('(..)', r'\1:', digest)[0:-1].upper()
+		# Hash the SSL certificate.
+		digest = digest(cert).hexdigest()
+		# Make the SSL certificate hash pretty.
+		digest = re.sub('(..)', r'\1:', digest)[0:-1].upper()
 
-	return digest
+		return digest
 
 if __name__ == '__main__':
 	import optparse
+	CC = CertificateChecker
 
 	op = optparse.OptionParser(
 		usage='%prog [options] host',
@@ -110,7 +113,7 @@ if __name__ == '__main__':
 
 	try:
 		if opts.show == 'digest':
-			digest = get_cert_digest(host, port=opts.port, digest=opts.digest)
+			digest = CC.get_cert_digest(host, port=opts.port, digest=opts.digest)
 			print(digest)
 
 		elif opts.show == 'certificate':
